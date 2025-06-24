@@ -1,0 +1,25 @@
+name: Atualizar Alertas MapBiomas
+
+on:
+  schedule:
+    - cron: '0 12 * * 1'  # Toda segunda-feira às 12h UTC
+  workflow_dispatch:  # Permite rodar manualmente também
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Instalar R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Instalar pacotes necessários
+        run: |
+          install.packages(c("sf", "dplyr", "googledrive"))
+        shell: Rscript {0}
+
+      - name: Rodar script de atualização
+        run: Rscript update_alertas.R
