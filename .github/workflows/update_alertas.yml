@@ -1,31 +1,13 @@
-name: Atualizar Alertas MapBiomas
+name: Teste sem GDRIVE_TOKEN
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # a cada 5 minutos
-
-#on:
-#  schedule:
-#    - cron: '0 3 * * 1'  # roda toda segunda-feira às 3h UTC (meia-noite em Brasília)
-#  # (removido workflow_dispatch para evitar conflitos)
+    - cron: '*/5 * * * *'
 
 jobs:
-  atualizar_alertas:
+  testar_schedule:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checar código
-        uses: actions/checkout@v3
-
-      - name: Configurar R
-        uses: r-lib/actions/setup-r@v2
-
-      - name: Definir variável GDRIVE_TOKEN
-        run: echo "GDRIVE_TOKEN=${{ secrets.GDRIVE_TOKEN }}" >> $GITHUB_ENV
-
-      - name: Instalar pacotes R
-        run: |
-          Rscript -e 'install.packages(c("sf", "dplyr", "googledrive", "gargle"))'
-
-      - name: Rodar script de atualização
-        run: Rscript update_alertas.R
+      - name: Echo simples
+        run: echo "Rodando sem secrets"
