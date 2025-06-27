@@ -2,8 +2,12 @@ name: Atualizar Alertas MapBiomas
 
 on:
   schedule:
-    - cron: '0 3 * * 1'  # roda toda segunda-feira às 3h UTC (meia-noite em Brasília)
-  # (removido workflow_dispatch para evitar conflitos)
+    - cron: '*/5 * * * *'  # a cada 5 minutos
+
+#on:
+#  schedule:
+#    - cron: '0 3 * * 1'  # roda toda segunda-feira às 3h UTC (meia-noite em Brasília)
+#  # (removido workflow_dispatch para evitar conflitos)
 
 jobs:
   atualizar_alertas:
