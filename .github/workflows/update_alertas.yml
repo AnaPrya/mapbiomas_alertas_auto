@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GDRIVE_TOKEN: ${{ secrets.GDRIVE_TOKEN }}
+      GDRIVE_TOKEN: ${{secrets.GDRIVE_TOKEN}}
 
     steps:
       - name: Checar código
@@ -25,3 +25,4 @@ jobs:
 
       - name: Rodar script de atualização
         run: Rscript update_alertas.R
+        #
