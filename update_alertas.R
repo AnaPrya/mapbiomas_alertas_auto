@@ -6,8 +6,8 @@ library(gargle)
 
 sf_use_s2(FALSE)
 
-# Autenticação silenciosa com token salvo no GitHub Actions
-drive_auth(path = Sys.getenv("GDRIVE_TOKEN"))
+# Autenticação com o arquivo criado no GitHub Actions
+drive_auth(path = "credencial.json")
 
 # Baixa shapefile do MapBiomas Alerta
 url <- "https://alerta.mapbiomas.org/downloads/shape/ALERTA_2024.zip"
