@@ -19,7 +19,11 @@ jobs:
       - name: Instalar pacotes R com dependências do sistema
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          packages: sf, dplyr, googledrive, gargle
+          packages: |
+            sf
+            dplyr
+            googledrive
+            gargle
 
       - name: Autenticar Google Drive
         run: echo "GDRIVE_TOKEN=${{ secrets.GDRIVE_TOKEN }}" >> $GITHUB_ENV
