@@ -6,8 +6,11 @@ library(gargle)
 
 sf_use_s2(FALSE)
 
-# Autenticação com o arquivo criado no GitHub Actions
-drive_auth(path = "credencial.json")
+# Autenticação com o secret do GitHub salvo na variável de ambiente GDRIVE_TOKEN
+gdrive_token <- Sys.getenv("GDRIVE_TOKEN")
+tmp <- tempfile(fileext = ".json")
+writeLines(gdrive_token, tmp)
+drive_auth(path = tmp)
 
 # Baixa shapefile do MapBiomas Alerta
 url <- "https://alerta.mapbiomas.org/downloads/shape/ALERTA_2024.zip"
@@ -28,7 +31,6 @@ st_write(alertas, dsn = file.path(saida_dir, "alertas_mapbiomas.shp"), delete_la
 arquivos_shp <- list.files(saida_dir, pattern = "alertas_mapbiomas\\.", full.names = TRUE)
 zip_path <- file.path(tempdir(), "alertas_mapbiomas.zip")
 zip(zipfile = zip_path, files = arquivos_shp)
-#
 
 # Upload no Google Drive
 pasta_id <- "176hXIXCrb9Zac2CwVLrqOoxy3qDzlyk5"
