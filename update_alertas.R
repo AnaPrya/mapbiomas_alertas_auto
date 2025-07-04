@@ -5,10 +5,12 @@ library(gargle)
 
 sf_use_s2(FALSE)
 
+# Caminho completo do .json local
+caminho_credencial <- "C:/Users/pryab/OneDrive/Área de Trabalho/TCC/territoriolegal/mapbiomas_alertas_auto/credencial.json"
+
 # (1) Teste local: carregar token do .json
-# Isso só precisa ser rodado localmente, NÃO dentro do GitHub Actions
 if (interactive()) {
-  Sys.setenv(GDRIVE_TOKEN = readLines("credencial.json") %>% paste(collapse = "\n"))
+  Sys.setenv(GDRIVE_TOKEN = paste(readLines(caminho_credencial), collapse = "\n"))
 }
 
 # (2) Autenticação com o secret do GitHub Actions
@@ -17,7 +19,7 @@ tmp <- tempfile(fileext = ".json")
 writeLines(gdrive_token, tmp)
 drive_auth(path = tmp)
 
-# (3) Baixa shapefile do MapBiomas Alerta — URL corrigida!
+# (3) Baixa shapefile do MapBiomas Alerta — URL oficial
 url <- "https://storage.googleapis.com/alerta-public/dashboard/downloads/dashboard_alerts-shapefile.zip"
 temp_zip <- tempfile(fileext = ".zip")
 download.file(url, temp_zip, mode = "wb")
@@ -45,4 +47,3 @@ zip(zipfile = zip_path, files = arquivos_shp)
 # (8) Upload no Google Drive
 pasta_id <- "176hXIXCrb9Zac2CwVLrqOoxy3qDzlyk5"
 drive_upload(media = zip_path, path = as_id(pasta_id), overwrite = TRUE)
-
