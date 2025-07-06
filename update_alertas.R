@@ -5,19 +5,13 @@ library(gargle)
 
 sf_use_s2(FALSE)
 
-# (1) Autenticação flexível: local ou GitHub Actions
-if (file.exists("credencial.json")) {
-  # LOCAL: autentica com arquivo JSON local
-  drive_auth(path = "credencial.json")
+# (1) Autenticação simples: usa o caminho completo para o JSON
+cred_path <- "C:/Users/pryab/OneDrive/Área de Trabalho/TCC/territoriolegal/mapbiomas_alertas_auto/credencial.json"
+
+if (file.exists(cred_path)) {
+  drive_auth(path = cred_path)
 } else {
-  # GITHUB ACTIONS: pega token do secret, ajusta e autentica
-  gdrive_token <- Sys.getenv("GDRIVE_TOKEN")
-  if (nchar(gdrive_token) == 0) stop("Variável de ambiente GDRIVE_TOKEN não encontrada.")
-  
-  gdrive_token <- gsub("\\\\n", "\n", gdrive_token)
-  tmp <- tempfile(fileext = ".json")
-  writeLines(gdrive_token, tmp)
-  drive_auth(path = tmp)
+  stop(paste("Arquivo 'credencial.json' não encontrado em:", cred_path))
 }
 
 # (2) Baixa shapefile do MapBiomas Alerta — URL oficial
