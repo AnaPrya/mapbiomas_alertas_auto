@@ -2,7 +2,7 @@ name: Atualizar Alertas MapBiomas
 
 on:
   schedule:
-    - cron: '0 3 * * 1'  # toda segunda-feira às 3h UTC (meia-noite em Brasília)
+    - cron: '0 3 * * 1'
   workflow_dispatch:
 
 jobs:
@@ -33,11 +33,9 @@ jobs:
             googledrive
             gargle
 
-      # ✅ Garante que a variável de ambiente GDRIVE_TOKEN seja salva como credencial.json
-      # Isso só funciona se o conteúdo do secret for um JSON de conta de serviço (com "type": "service_account")
       - name: Autenticar Google Drive
         run: |
-          echo "$GDRIVE_TOKEN" > credencial.json
+          printf '%s' "$GDRIVE_TOKEN" > credencial.json
         env:
           GDRIVE_TOKEN: ${{ secrets.GDRIVE_TOKEN }}
 
