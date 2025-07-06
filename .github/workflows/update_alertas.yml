@@ -35,7 +35,9 @@ jobs:
 
       - name: Autenticar Google Drive
         run: |
-          echo '${{ secrets.GDRIVE_TOKEN }}' > credencial.json
+          echo "$GDRIVE_TOKEN" > credencial.json
+        env:
+          GDRIVE_TOKEN: ${{ secrets.GDRIVE_TOKEN }}
 
       - name: Rodar script R
         run: Rscript update_alertas.R
