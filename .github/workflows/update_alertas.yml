@@ -32,6 +32,7 @@ jobs:
             dplyr
             googledrive
             gargle
+            geobr
 
       - name: Autenticar Google Drive
         run: |
