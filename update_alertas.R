@@ -2,6 +2,7 @@ library(sf)
 library(dplyr)
 library(googledrive)
 library(gargle)
+library(geobr)  # Novo pacote adicionado
 
 sf_use_s2(FALSE)
 
@@ -39,16 +40,37 @@ print(list.files(tempdir(), recursive = TRUE))
 shp_path <- list.files(tempdir(), pattern = "\\.shp$", full.names = TRUE)[1]
 alertas <- st_read(shp_path, quiet = TRUE) %>% st_transform(4326)
 
-# (5) Exporta shapefile para pasta temporária
+# (5) Exporta shapefile completo para pasta temporária
 saida_dir <- file.path(tempdir(), "shp_saida")
 dir.create(saida_dir)
 st_write(alertas, dsn = file.path(saida_dir, "alertas_mapbiomas.shp"), delete_layer = TRUE)
 
-# (6) Compacta shapefile em .zip
+# (5.1) Segrega base nacional em arquivos por estado
+ufs <- read_state(code_state = "all") %>% st_transform(4326)
+ufs$nome_estado <- tolower(gsub("[[:space:]]", "_", ufs$name_state))
+
+for (i in seq_len(nrow(ufs))) {
+  estado_nome <- ufs$nome_estado[i]
+  estado_geom <- ufs[i, ]
+  intersecao_estado <- st_intersection(alertas, estado_geom)
+  
+  if (nrow(intersecao_estado) > 0) {
+    estado_path <- file.path(saida_dir, paste0("alertas_", estado_nome, ".shp"))
+    st_write(intersecao_estado, dsn = estado_path, delete_layer = TRUE, quiet = TRUE)
+  }
+}
+
+# (6) Compacta shapefile principal em .zip
 arquivos_shp <- list.files(saida_dir, pattern = "alertas_mapbiomas\\.", full.names = TRUE)
 zip_path <- file.path(tempdir(), "alertas_mapbiomas.zip")
 zip(zipfile = zip_path, files = arquivos_shp)
 
-# (7) Upload no Google Drive
+# (7) Upload do zip principal no Google Drive
 pasta_id <- "176hXIXCrb9Zac2CwVLrqOoxy3qDzlyk5"
 drive_upload(media = zip_path, path = as_id(pasta_id), overwrite = TRUE)
+
+# (7.1) Upload dos shapefiles estaduais no Google Drive
+arquivos_estado <- list.files(saida_dir, pattern = "^alertas_.*\\.shp$", full.names = TRUE)
+for (arq in arquivos_estado) {
+  drive_upload(media = arq, path = as_id(pasta_id), overwrite = TRUE)
+}
